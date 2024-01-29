@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8"/>
+<style>
+body {
+    font-family: Arial, sans-serif;
+}
+</style>
+<body>
+<div>Bitte gib deine Test-ID in das Textfeld unten ein, sobald dich die Testleitung dazu auffordert.
+Du findest diese auf dem Etikett, das du zu Beginn dieses Moduls auf dein Testheft geklebt hast. </div><br/>
+	
+<input type="text" name="testID" id="testID"  onchange="updateVariable();"/><br/><br/>
+
+<div id="invalidTestID" style="display: none;"></div>
+
+<br/><br/>
+
+<div>Gib bitte zusätzlich das Zauberwort ein:</div><br/>
+
+<input type="text" name="startWord" id="startWord"  onchange="updateVariable();"/> <br/><br/>
+
+<div id="invalidStartWord" style="display: none;"></div>
+
+<br/><br/>
+
+<div id="instructionText" style="display: none;"></div>
+
+<script type="text/javascript">
+
+let eventCount = 0;
+let testID = -1;
+let startWord = -1;
+
+function updateVariable()
+{
+
+    const _startWords = [  "winter", "blau" ];
+     
+	const _testIDs = [  "01-PS-CBA-CBA", 
+						"02-PS-CBA-CBA", 
+						"03-PS-CBA-CBA", 
+						"04-PS-PBA-PBA", 
+						"05-PS-PBA-PBA", 
+						"06-PS-PBA-PBA", 
+						"07-PS-PBA-CBA", 
+						"08-PS-PBA-CBA", 
+						"09-PS-PBA-CBA", 
+						"10-PS-CBA-PBA", 
+						"11-PS-CBA-PBA", 
+						"12-PS-CBA-PBA", 
+						"13-PS-CBA-CBA", 
+						"14-PS-CBA-CBA", 
+						"15-PS-CBA-CBA", 
+						"16-PS-PBA-PBA", 
+						"17-PS-PBA-PBA", 
+						"18-PS-PBA-PBA", 
+						"19-PS-PBA-CBA", 
+						"20-PS-PBA-CBA", 
+						"21-PS-PBA-CBA", 
+						"22-PS-CBA-PBA", 
+						"23-PS-CBA-PBA", 
+						"24-PS-CBA-PBA", 
+						"25-PS-CBA-CBA", 
+						"26-PS-CBA-CBA", 
+						"27-PS-CBA-CBA", 
+						"28-PS-PBA-PBA", 
+						"29-PS-PBA-PBA", 
+						"30-PS-PBA-PBA", 
+						"31-PS-PBA-CBA", 
+						"32-PS-PBA-CBA", 
+						"33-PS-PBA-CBA", 
+						"34-PS-CBA-PBA", 
+						"35-PS-CBA-PBA", 
+						"36-PS-CBA-PBA", 
+						"37-PS-CBA-CBA", 
+						"38-PS-CBA-CBA", 
+						"39-PS-CBA-CBA", 
+						"40-PS-PBA-PBA", 
+						"41-PS-PBA-PBA", 
+						"42-PS-PBA-PBA", 
+						"43-PS-PBA-CBA", 
+						"44-PS-PBA-CBA", 
+						"45-PS-PBA-CBA", 
+						"46-PS-CBA-PBA", 
+						"47-PS-CBA-PBA", 
+						"48-PS-CBA-PBA"];
+						
+	const testIDValue = document.getElementById("testID").value;		 				
+	testID =  _testIDs.indexOf(testIDValue);
+ 				
+	if (testID !=-1){
+		
+		var div = document.getElementById('invalidTestID');
+		div.innerHTML = "Die Zeichenkette ist eine gültige Test-ID.";  
+		div.style.display = 'block';  
+		
+		postSetVariable("V_TestID",testIDValue, eventCount++);
+		postSetVariable("V_TestIDIndex",testID, eventCount++);
+		
+	} else {
+
+		var div = document.getElementById('invalidTestID');
+		div.innerHTML = '<font color="red">Die Zeichenkette ist keine gültige Test-ID.</font>';  
+		div.style.display = 'block';   
+
+	}
+	
+	const startWordValue = document.getElementById("startWord").value.toLowerCase().trim();			
+	startWord =  _startWords.indexOf(startWordValue);
+	
+	if (startWord !=-1){
+		
+		var div = document.getElementById('invalidStartWord');
+		div.innerHTML = "Das Zauberwort ist gültig.";  
+		div.style.display = 'block';  
+		
+		postSetVariable("V_StartWord",startWordValue, eventCount++);
+		postSetVariable("V_StartWordIndex",startWord, eventCount++);
+		
+	} else {
+
+		var div = document.getElementById('invalidStartWord');
+		div.innerHTML = '<font color="red">Die Zeichenkette ist kein gültiges Zauberwort.</font>';  
+		div.style.display = 'block';   
+
+	}
+	
+	if (startWord !=-1 && testID !=-1){
+		var div = document.getElementById('instructionText');
+		div.innerHTML = "<i>Klicke jetzt oben rechts auf den WEITER-Pfeil.</i>";  
+		div.style.display = 'block';  
+		 
+		const _PS1aCBA_pos1 = [0,1,2,9,10,11];		 
+		const _PS1bCBA_pos1 = [12,13,14,21,22,23];
+		const _PS2aCBA_pos1 = [24,25,26,33,34,35];		
+		const _PS2bCBA_pos1 = [36,37,38,45,46,47];
+		
+		const _PS1aCBA_pos2 = [12,18,24,30,36,42];		 
+		const _PS1bCBA_pos2 = [0,6,25,31,37,43];
+		const _PS2aCBA_pos2 = [1,7,13,19,38,44];		
+		const _PS2bCBA_pos2 = [2,8,14,20,26,32];
+	
+		const _PS1aPBA_pos1 = [3,4,5,6,7,8];		 
+		const _PS1bPBA_pos1 = [15,16,17,18,19,20];
+		const _PS2aPBA_pos1 = [27,28,29,30,31,32];		
+		const _PS2bPBA_pos1 = [39,40,41,42,43,44];
+		
+		const _PS1aPBA_pos2 = [15,21,27,33,39,45];		 
+		const _PS1bPBA_pos2 = [3,9,28,34,40,46];
+		const _PS2aPBA_pos2 = [4,10,16,22,41,47];		
+		const _PS2bPBA_pos2 = [5,11,17,23,29,35];
+		 
+		if (startWord == 0 & _PS1aCBA_pos1.includes(testID)){
+			postSetVariable("V_Form",0, eventCount++);	
+			postSetVariable("V_PBA_Start",27, eventCount++);
+			postSetVariable("V_PBA_End",29, eventCount++);
+			postSetVariable("V_PBA_Check_Start",8024, eventCount++);			
+			postSetVariable("V_PBA_Check_End",4836, eventCount++);			
+			postSetVariable("V_FormLabel","PS1a: X412+X417 (Pos 1, CBA)", eventCount++);			
+		}
+		else if (startWord == 0 & _PS1bCBA_pos1.includes(testID)){
+			postSetVariable("V_Form",1, eventCount++);	
+			postSetVariable("V_PBA_Start",29, eventCount++);
+			postSetVariable("V_PBA_End",31, eventCount++);
+			postSetVariable("V_PBA_Check_Start",4836, eventCount++);			
+			postSetVariable("V_PBA_Check_End",8647, eventCount++);		
+			postSetVariable("V_FormLabel","PS1b: X423+X601 (Pos 1, CBA)", eventCount++);
+		}
+		else if (startWord == 0 & _PS2aCBA_pos1.includes(testID)){
+			postSetVariable("V_Form",2, eventCount++);				
+			postSetVariable("V_PBA_Start",31, eventCount++);
+			postSetVariable("V_PBA_End",33, eventCount++);
+			postSetVariable("V_PBA_Check_Start",8647, eventCount++);			
+			postSetVariable("V_PBA_Check_End",4683, eventCount++);	
+			postSetVariable("V_FormLabel","PS2a: X402+X414+X415 (Pos 1, CBA)", eventCount++);
+		}
+		else if (startWord == 0 & _PS2bCBA_pos1.includes(testID)){
+			postSetVariable("V_Form",3, eventCount++);			
+			postSetVariable("V_PBA_Start",33, eventCount++);
+			postSetVariable("V_PBA_End",35, eventCount++);
+			postSetVariable("V_PBA_Check_Start",4683, eventCount++);			
+			postSetVariable("V_PBA_Check_End",6290, eventCount++);	
+			postSetVariable("V_FormLabel","PS2b: X602+X603 (Pos 1, CBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS1aCBA_pos2.includes(testID)){
+			postSetVariable("V_Form",0, eventCount++);	
+			postSetVariable("V_PBA_Start",27, eventCount++);
+			postSetVariable("V_PBA_End",29, eventCount++);	
+			postSetVariable("V_PBA_Check_Start",8024, eventCount++);			
+			postSetVariable("V_PBA_Check_End",4836, eventCount++);			
+			postSetVariable("V_FormLabel","PS1a: X412+X417 (Pos 2, CBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS1bCBA_pos2.includes(testID)){
+			postSetVariable("V_Form",1, eventCount++);	
+			postSetVariable("V_PBA_Start",29, eventCount++);
+			postSetVariable("V_PBA_End",31, eventCount++);	
+			postSetVariable("V_PBA_Check_Start",4836, eventCount++);			
+			postSetVariable("V_PBA_Check_End",8647, eventCount++);			
+			postSetVariable("V_FormLabel","PS1b: X423+X601 (Pos 2, CBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS2aCBA_pos2.includes(testID)){
+			postSetVariable("V_Form",2, eventCount++);	
+			postSetVariable("V_PBA_Start",31, eventCount++);
+			postSetVariable("V_PBA_End",33, eventCount++);	
+			postSetVariable("V_PBA_Check_Start",8647, eventCount++);			
+			postSetVariable("V_PBA_Check_End",4683, eventCount++);			
+			postSetVariable("V_FormLabel","PS2a: X402+X414+X415 (Pos 2, CBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS2bCBA_pos2.includes(testID)){
+			postSetVariable("V_Form",3, eventCount++);	
+			postSetVariable("V_PBA_Start",33, eventCount++);
+			postSetVariable("V_PBA_End",35, eventCount++);		
+			postSetVariable("V_PBA_Check_Start",4683, eventCount++);			
+			postSetVariable("V_PBA_Check_End",6290, eventCount++);		
+			postSetVariable("V_FormLabel","PS2b: X602+X603 (Pos 2, CBA)", eventCount++);
+		} 
+		else if (startWord == 0 & _PS1aPBA_pos1.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);
+			postSetVariable("V_PBA_Start",3, eventCount++);
+			postSetVariable("V_PBA_End",9, eventCount++);
+			postSetVariable("V_PBA_Check_Start",2468, eventCount++);			
+			postSetVariable("V_PBA_Check_End",6412, eventCount++);
+			postSetVariable("V_FormLabel","PS1a: X412+X417 (Pos 1, PBA)", eventCount++);
+		}
+		else if (startWord == 0 & _PS1bPBA_pos1.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",9, eventCount++);
+			postSetVariable("V_PBA_End",15, eventCount++);
+			postSetVariable("V_PBA_Check_Start",6412, eveintCount++);			
+			postSetVariable("V_PBA_Check_End",6201, eventCount++);			
+			postSetVariable("V_FormLabel","PS1b: X423+X601 (Pos 1, PBA)", eventCount++);
+		}
+		else if (startWord == 0 & _PS2aPBA_pos1.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",15, eventCount++);
+			postSetVariable("V_PBA_End",21, eventCount++);
+			postSetVariable("V_PBA_Check_Start",6201, eventCount++);			
+			postSetVariable("V_PBA_Check_End",2058, eventCount++);					
+			postSetVariable("V_FormLabel","PS2a: X402+X414 (Pos 1, PBA)", eventCount++);
+		}
+		else if (startWord == 0 & _PS2bPBA_pos1.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",21, eventCount++);
+			postSetVariable("V_PBA_End",27, eventCount++);
+			postSetVariable("V_PBA_Check_Start",2058, eventCount++);			
+			postSetVariable("V_PBA_Check_End",8024, eventCount++);					
+			postSetVariable("V_FormLabel","PS2b: X602+X603 (Pos 1, PBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS1aPBA_pos2.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",3, eventCount++);
+			postSetVariable("V_PBA_End",9, eventCount++);
+			postSetVariable("V_PBA_Check_Start",2468, eventCount++);			
+			postSetVariable("V_PBA_Check_End",6412, eventCount++);			
+			postSetVariable("V_FormLabel","PS1a: X412+X417 (Pos 2, PBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS1bPBA_pos2.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",9, eventCount++);
+			postSetVariable("V_PBA_End",15, eventCount++);
+			postSetVariable("V_PBA_Check_Start",6412, eventCount++);			
+			postSetVariable("V_PBA_Check_End",6201, eventCount++);					
+			postSetVariable("V_FormLabel","PS1b: X423+X601 (Pos 2, PBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS2aPBA_pos2.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",15, eventCount++);
+			postSetVariable("V_PBA_End",21, eventCount++);
+			postSetVariable("V_PBA_Check_Start",6201, eventCount++);			
+			postSetVariable("V_PBA_Check_End",2058, eventCount++);				
+			postSetVariable("V_FormLabel","PS2a: X402+X414 (Pos 2, PBA)", eventCount++);
+		}
+		else if (startWord == 1 & _PS2bPBA_pos2.includes(testID)){
+			postSetVariable("V_Form",4, eventCount++);	
+			postSetVariable("V_PBA_Start",21, eventCount++);
+			postSetVariable("V_PBA_End",27, eventCount++);
+			postSetVariable("V_PBA_Check_Start",2058, eventCount++);			
+			postSetVariable("V_PBA_Check_End",8024, eventCount++);					
+			postSetVariable("V_FormLabel","PS2b: X602+X603 (Pos 2, PBA)", eventCount++);
+		} else {
+			postSetVariable("V_Form",-1, eventCount++);	
+			postSetVariable("V_FormLabel","(undefined)", eventCount++);		
+		}
+				
+		if (startWord == 0){
+			console.log("erster Testteil");
+			postSetVariable("V_PartLabel","ersten Testteil", eventCount++);
+			postSetVariable("V_Part",0, eventCount++);
+		} else if (startWord == 1){
+			console.log("zweiter Testteil");
+			postSetVariable("V_PartLabel","zweiten Testteil", eventCount++);
+			postSetVariable("V_Part",1, eventCount++);
+		} 
+				
+	} else {
+		var div = document.getElementById('instructionText');
+		div.innerHTML = "";  
+		div.style.display = 'none';  
+	}
+	
+	 
+	
+}
+  
+ 
+       
+function acceptOperatorMessage(data) {	
+
+	console.log(data);
+	  
+}
+ 
+ 
+function getState() {
+    return { 
+        testID
+    }
+}
+ 
+function setState(state) {
+    testID = state.testID;    
+}
+ 
+function acceptGetVariableResult(name, type, value, callId) {
+	
+}
+ 
+startListeningToRuntimePostMessageEvents(acceptGetVariableResult, acceptOperatorMessage);
+  
+function declareVariables() {
+	return [
+		{ 
+			name: 'V_NextPage',
+	  		type: 'Integer',
+	  		defaultValue: -1,
+	  		namedValues: []
+	  	}
+	];
+}
+ 
+postSetVariable("V_FormLabel","", eventCount++);
+ 
+startListeningToVariableDeclarationRequests(declareVariables);
+
+// ------------------ methods for generic use ----------------------------------------------------------
+
+/**
+ * Trigger a state machine event in the CBA runtime. 
+ * 
+ * The traceCount parameter must be an integer value greater or equal 0 and
+ * specifies wether the given the event will count as one or more user interactions.   
+ */
+ function postStatemachineEvent(eventName, traceCount)
+{
+	postMessageWithPaths({
+        microfinEvent: eventName,
+        traceCount: traceCount
+	});
+}
+
+/**
+ * Inject a message into the trace log of the CBA runtime. 
+ * 
+ * The traceType parameter is optional. It determines the trace type attribute 
+ * of the injected trace message.
+ * 
+ * The traceCount parameter must be an integer value greater or equal 0 and
+ * specifies wether the given the event will count as one or more user interactions.   
+ */
+ function postTraceMessage(traceMessage, traceType, traceCount)
+{
+	postMessageWithPaths({
+    	traceMessage: traceMessage,
+        traceType: traceType,
+        traceCount: traceCount
+	});
+}
+
+/**
+ * Get the value of a variable in the CBA runtime. 
+ * 
+ * The callId parameter should be used to match the call to the 
+ * result coming in via the getVariableResultCallback (see startListeningToPostMessageEvents method).
+ */
+ function postGetVariable(variableName, callId)
+{
+	postMessageWithPaths({
+    	getVariable: {
+    	  variableName: variableName,
+    	  callId: callId,
+    	},
+        traceCount: 0
+
+	});
+}
+
+/**
+ * Set the value of a variable in the CBA runtime. 
+ * 
+ * The traceCount parameter must be an integer value greater or equal 0 and
+ * specifies wether the given the event will count as one or more user interactions.   
+ */
+function postSetVariable(variableName, variableValue, traceCount)
+{
+	postMessageWithPaths({
+    	setVariable: {
+    	  variableName: variableName,
+    	  newValue: variableValue,
+    	},
+        traceCount: traceCount
+	});
+}
+
+/**
+ * Send the given payload as an event to the CBA runtime 
+ * and implicitly extend it with the paths of our hosting ExternalPageFrame component.
+ * 
+ * This might might not work if the ExternalPageFrame content comes
+ * from an external server. 
+ * 
+ */
+function postMessageWithPaths(payload)
+{
+	payload.indexPath = getIndexPath();
+	payload.userDefIdPath = getUserDefIdPath();
+	postMessageWithErrorLog(payload);
+}
+
+/**
+ * Send an event to the CBA runtime.
+ */
+function postMessageWithErrorLog(payload)
+{
+	try
+	{
+		// TODO: adapt the target origin  
+		window.parent.postMessage(JSON.stringify(payload), '*');	
+	} 
+	catch(e) {
+		console.debug(e); 
+	}
+}
+
+/**
+ * Obtain the path of user defined IDs leading to our hosting ExternalPageFrame component.
+ * 
+ * You might use this as value for the userDefIdPath attribute in the message payload structure
+ * when sending events to the CBA runtime.
+ * 
+ * This might might not work if the ExternalPageFrame content comes
+ * from an external server. 
+ */
+ function getUserDefIdPath()
+{
+	return getQueryVariable('userDefIdPath');
+}
+
+/**
+ * Obtain the index path of our hosting ExternalPageFrame component.
+ * 
+ * You might use this as value for the userDefIdPath attribute in the message payload structure
+ * when sending events to the CBA runtime.
+ * 
+ * This might might not work if the ExternalPageFrame content comes
+ * from an external server. 
+ */
+function getIndexPath() 
+{
+	return getQueryVariable('indexPath');
+}
+
+/**
+ * Obtain the value of a query variable from the calling URL. 
+ * 
+ * @variable: The name of the variable in the URL query.
+ */
+function getQueryVariable(variable)
+{
+	const parsedUrl = new URL(window.location.href);
+	return parsedUrl.searchParams.get(variable);
+}
+
+/**
+ * Start listening on post message events coming in from the CBA runtime.
+ * 
+ * The getVariableResultCallback parameter should be a method that accepts four parameters: 
+ *   - name: the name of the variable
+ *   - type: the data type of the variable
+ *   - value: the value of the variable
+ *   - callId: the callId of the getVariable call that triggered this result message.
+ * 
+ * The operatorMessageCallback parameter should be a method that accepts an array.
+ * 
+ */
+ function startListeningToRuntimePostMessageEvents(getVariableResultCallback, operatorMessageCallback) {
+    window.addEventListener(
+	"message", 
+	(event) => {
+		const payload = JSON.parse(event.data);
+		if (payload !== null && typeof(payload) === 'object' && payload.callId !== undefined) {
+            if (payload.result !== null && typeof(payload.result) === 'object') {
+			    const { name, type, value } = payload.result;			
+			    getVariableResultCallback(name, type, value, payload.callId);
+            }   
+		} else if (Array.isArray(payload)) { 
+			operatorMessageCallback(payload);
+		}
+	}, 
+	false);
+ }
+
+ 
+/**
+ * Start listening on post message events coming in from the item builder during time design time.
+ * 
+ * The declareVariableCallback parameter should be a method that expects no parameter and returns 
+ * an array of variable declaration objects with these attributes:
+ *   - name: the name of the variable
+ *   - type: the type of the variable, one of 'Integer', 'Number', 'String', 'Boolean'
+ *   - defaultValue: the initial value of the variable
+ *   - namedValues: an array of objects with a name and a value attribute. 
+ */
+ function startListeningToVariableDeclarationRequests(declareVariableCallback) {
+    // listener for providing initial variable data signal.
+    window.addEventListener(
+    "message",
+    (event) => {    
+        const { callId } = JSON.parse(event.data);
+        if(callId !== undefined && callId.includes("importVariables")) {
+            const variables = declareVariables();
+            const pass_data = {
+            initialVariables: variables,
+            callId
+            }
+            try {
+                window.parent.postMessage(JSON.stringify(pass_data), '*');
+            } catch (error) {
+                console.log("error on external listener - ", error);
+            }
+        }
+    },
+    false);
+ }
+ 
+
+</script>
+</html>

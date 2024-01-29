@@ -1,0 +1,5 @@
+/*in linux, select are not white by default*/
+select
+{
+	background-color: white;
+}
