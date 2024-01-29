@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<events>
-    <event>
-        <list type="catch"><![CDATA[click,dblclick,keypress,change]]></list>
-        <attributes><![CDATA[timeStamp,id]]></attributes>
-        <factorize name="position"><![CDATA[clientX,clientY,screenX,screenY]]></factorize>
-    </event>
-</events>

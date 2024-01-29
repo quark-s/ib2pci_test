@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/ib2pci_test/FLA25FT/static/css/main.f8610f8c.chunk.css",
+    "main.js": "/ib2pci_test/FLA25FT/static/js/main.dc1e64a0.chunk.js",
+    "runtime-main.js": "/ib2pci_test/FLA25FT/static/js/runtime-main.93d5a762.js",
+    "static/js/2.f3535282.chunk.js": "/ib2pci_test/FLA25FT/static/js/2.f3535282.chunk.js",
+    "index.html": "/ib2pci_test/FLA25FT/index.html",
+    "static/js/2.f3535282.chunk.js.LICENSE.txt": "/ib2pci_test/FLA25FT/static/js/2.f3535282.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.93d5a762.js",
+    "static/js/2.f3535282.chunk.js",
+    "static/css/main.f8610f8c.chunk.css",
+    "static/js/main.dc1e64a0.chunk.js"
+  ]
+}

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<events>
-    <event>
-        <list type="nocatch"><![CDATA[mousemove]]></list>
-        <list type="nocatch"><![CDATA[mouseover]]></list>
-        <list type="nocatch"><![CDATA[mouseenter]]></list>
-        <list type="nocatch"><![CDATA[mouseout]]></list>
-    </event>
-</events>

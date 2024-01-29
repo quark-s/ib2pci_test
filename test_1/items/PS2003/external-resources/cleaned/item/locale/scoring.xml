@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<score>
-	<scoring source="question" mode="none" item="item0"></scoring>
-	<scoring source="question" mode="fte" item="item1"></scoring>
-	<scoring source="question" mode="fte" item="item2"></scoring>
-</score>
