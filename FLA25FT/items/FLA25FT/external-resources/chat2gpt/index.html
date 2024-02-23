@@ -1,80 +1,86 @@
 <!DOCTYPE html>
 
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <link rel="stylesheet" href="styles.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="font.css" /> 
-    <script type="text/javascript"src="tfjs.js"></script>
-    <script type="text/javascript" src="universal-sentence-encoder.js"></script>
-    <script type="text/javascript" src="script.js" defer></script>
-   <script type="text/javascript" src="purify.js"></script>    
-  </head>
-  <body>
-    <script>
-	
-	function setState(state){	
-	
-	}
-	 
-	function getState() {
-	    return { content: "" } ;    
-	}
-	
-	var traceCount = 0;
-	
-	function getQueryVariable(variable)
-	{
-		const parsedUrl = new URL(window.location.href);
-		return parsedUrl.searchParams.get(variable);
-	}
-	  
-	function getUserDefinedID(str) {
-	    var lastIndex = str.lastIndexOf('=');
-	    if (lastIndex === -1) {
-	        return ''; // Return an empty string if no "=" is found
-	    }
-	    return str.substring(lastIndex + 1); // +1 to start after the "="
-	}
-	 
-	var indexPath = getQueryVariable('indexPath');
-	var userDefIdPath = getQueryVariable('userDefIdPath');
-	var userDefId = getUserDefinedID(userDefIdPath);
- 	
-	console.log("DEBUG: Chat2GPT for = " + userDefId);
-	
-	let prompts = ["default"];
-	let responses = ["How can I assist you today"];
-	let promptFile = './taskA.json'; 
-	if (userDefId=="CHAT_A"){
-		promptFile = './taskA.json';	    
-	}
-	else{
-	 promptFile = './taskB.json';
-	} 
-	
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="font.css" />
+  <script type="text/javascript" src="tfjs.js"></script>
+  <script type="text/javascript" src="universal-sentence-encoder.js"></script>
+  <script type="text/javascript" src="../Task/tasks.js"></script>
+  <script type="text/javascript" src="script.js" defer></script>
+  <script type="text/javascript" src="purify.js"></script>
+</head>
+
+<body>
+  <script>
+
+    function setState(state){	 
+      if(!!state?.chatInput && !!document.getElementById("chat-input"))
+        document.getElementById("chat-input").value = state.chatInput;
+    }
+    
+    function getState() {
+      let txt = document.getElementById("chat-input")?.value;
+      return !!txt ? {chatInput: txt} : {chatInput: ''};
+    }
+
+    var traceCount = 0;
+
+    function getQueryVariable(variable) {
+      const parsedUrl = new URL(window.location.href);
+      return parsedUrl.searchParams.get(variable);
+    }
+
+    function getUserDefinedID(str) {
+      var lastIndex = str.lastIndexOf('=');
+      if (lastIndex === -1) {
+        return ''; // Return an empty string if no "=" is found
+      }
+      return str.substring(lastIndex + 1); // +1 to start after the "="
+    }
+
+    var indexPath = getQueryVariable('indexPath');
+    var userDefIdPath = getQueryVariable('userDefIdPath');
+    var userDefId = getUserDefinedID(userDefIdPath);
+
+    console.log("DEBUG: Chat2GPT for = " + userDefId);
+
+    let prompts = ["default"];
+    let responses = ["How can I assist you today"];
+    let promptFile = './taskA.json';
+    if (userDefId == "CHAT_A") {
+      promptFile = './taskA.json';
+    }
+    else {
+      promptFile = './taskB.json';
+    }
+
     fetch(promptFile)
-       .then((response) => response.json())
-        .then((json) => {
-          prompts = json.map(function(x){return x.Prompt});
-          responses = json.map(function(x){return x.Response});
-       	}        
-       );
-	
-    </script>
-    <div class="chat-container"></div>
-    <div class="typing-container">
-      <div class="typing-content">
-        <div class="typing-textarea">
-          <textarea id="chat-input" spellcheck="false" data-gramm_editor="false" placeholder="Enter a prompt here" required></textarea>
-          <span id="send-btn" class="material-symbols-rounded">send</span>
-        </div>
-        <div class="typing-controls">
-          <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
-          <span id="delete-btn" class="material-symbols-rounded">delete</span>
+      .then((response) => response.json())
+      .then((json) => {
+        prompts = json.map(function (x) { return x.Prompt });
+        responses = json.map(function (x) { return x.Response });
+      }
+      );
+
+  </script>
+  <div class="chat-container"></div>
+  <div class="typing-container">
+    <div class="typing-content">
+      <div class="typing-textarea">
+        <textarea id="chat-input" spellcheck="false" data-gramm_editor="false" placeholder="Enter a prompt here"
+          required></textarea>
+        <span id="send-btn" class="material-symbols-rounded">send</span>
+      </div>
+      <div class="typing-controls">
+        <span id="theme-btn" class="material-symbols-rounded">light_mode</span>
+        <span id="delete-btn" class="material-symbols-rounded">delete</span>
       </div>
     </div>
-  </body>
+</body>
+
 </html>

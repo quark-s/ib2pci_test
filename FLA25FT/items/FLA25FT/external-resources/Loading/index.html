@@ -6,41 +6,50 @@
 
 <script type="text/javascript">
 
-function setState(state){	
-
-}
  
-function getState() {
-    return { } ;    
-}
-
-var traceCount = 0;
-
-function getQueryVariable(variable)
-{
-	const parsedUrl = new URL(window.location.href);
-	return parsedUrl.searchParams.get(variable);
-}
-  
 var indexPath = getQueryVariable('indexPath');
 var userDefIdPath = getQueryVariable('userDefIdPath');
   
 localStorage.removeItem("chatHistory");
 localStorage.removeItem("themeColor");
 
+var traceCount = 0;
+
 let rotation = 1;
 if (Math.random() > 0.5){
 	rotation = 0;
 }
 
-postTraceMessage(rotation,"FLA Rotation Defined",traceCount++)
-
-postSetVariable('V_Rotation', rotation, traceCount++);
-postStatemachineEvent('EV_Start', traceCount++);
+function setState(state){	
+	if(state.rotation){
+		rotation = state.rotation;
+	}
+	init();
+}
  
-console.log("Rotation = " + rotation);
-console.log("EV_START");
-    
+function getState() {
+    return { rotation } ;    
+}
+
+
+function getQueryVariable(variable)
+{
+	const parsedUrl = new URL(window.location.href);
+	return parsedUrl.searchParams.get(variable);
+}
+
+function init(){
+	postTraceMessage(rotation,"FLA Rotation Defined",traceCount++)
+
+	postSetVariable('V_Rotation', rotation, traceCount++);
+	postStatemachineEvent('EV_Start', traceCount++);
+	
+	console.log("Rotation = " + rotation);
+	console.log("EV_START");
+}
+init();
+
+
 document.addEventListener('contextmenu', event => {
     event.preventDefault();        
     postTraceMessage("right click","FLA Startup",traceCount++)    

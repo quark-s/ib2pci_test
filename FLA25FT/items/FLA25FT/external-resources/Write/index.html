@@ -34,11 +34,15 @@ textarea {
  let IBResultVariable = "V_StudentResponse_Chat";
  
  function setState(state){	 
-	 
+	 if(!!state?.content && !!document.getElementById("word_count")){
+	 	document.getElementById("word_count").value = state.content;
+		refreshWordCount();
+	 }
  }
  
  function getState() {
- 	 
+	let txt = document.getElementById("word_count")?.value;
+	return !!txt ? {content: txt} : {content: ''};
 }
  
  $(document).ready(function() {
@@ -94,8 +98,22 @@ textarea {
 	$("textarea#word_count").unbind("keydown").keydown(function(e){
 
 	});
-  
+	
+
+
+	var currentPasteEvent = {};
+
 	//word counter
+		$("#word_count").on('keydown', function(e) {
+
+			var textarea = e.target;
+			var charLower = String.fromCharCode(e.which).toLowerCase();
+
+			if((e.ctrlKey || e.metaKey) && charLower == "v"){
+				currentPasteEvent = {"cursorPosStart": textarea.selectionStart};
+			}
+		});
+
 		$("#word_count").on('keyup', function(e) {
 		
 			var textarea = e.target;
@@ -111,7 +129,7 @@ textarea {
 			if((e.ctrlKey || e.metaKey) && charLower == "c"){
 				data['traceMessage'] = JSON.stringify({"event": "textareaCopy", "content": e.target.value, "selected": selection});
 				window.parent.postMessage(JSON.stringify(data), "*");
-				//console.log('CTRL + C', selection, data);
+				// console.log('CTRL + C', selection, data);
 			}
 			else if((e.ctrlKey || e.metaKey) && charLower == "x"){
 				data['traceMessage'] = JSON.stringify({"event": "textareaCut", "content": e.target.value, "selected": selection});
@@ -119,12 +137,12 @@ textarea {
 				//console.log('CTRL +  X', data);
 			}			
 			else if((e.ctrlKey || e.metaKey) && charLower == "v"){
-				data['traceMessage'] = JSON.stringify({"event": "textareaPaste", "content": e.target.value, "selected": selection});
+				data['traceMessage'] = JSON.stringify({...currentPasteEvent, "event": "textareaPaste", "content": e.target.value, "cursorPosEnd": textarea.selectionStart});
+				currentPasteEvent = {};
 				window.parent.postMessage(JSON.stringify(data), "*");
-				//console.log('CTRL +  V', data);
+				// console.log('CTRL +  V', data);
 			}
-			else{
-											 
+			else{			 
 				data['traceMessage'] = JSON.stringify({"event": "textareaChange", "content": e.target.value, "key": charStr, "keycode":  e.keyCode});
 				window.parent.postMessage(JSON.stringify(data), "*");
 				//console.log("keydown", data);
@@ -132,11 +150,7 @@ textarea {
 			
 			postSetVariable(IBResultVariable, this.value, traceCount++);
 			
-			if (this.value.trim() != ""){	
-				var words = this.value.match(/\S+/g).length; 
-				$('#display_count').text(words);
-			}
-	
+			refreshWordCount();
 		});
 	
 
@@ -147,6 +161,14 @@ document.addEventListener('contextmenu', event => {
     event.preventDefault();
     console.log("Right Click");
 });
+
+function refreshWordCount(){
+	let txtArea = $("#word_count");
+	if (txtArea.length && txtArea[0].value.trim() != ""){	
+		var words = txtArea[0].value.match(/\S+/g).length; 
+		$('#display_count').text(words);
+	}
+}
 
 function getSelectedText() {
     var text = "";
@@ -169,6 +191,8 @@ document.onmouseup = doSomethingWithSelectedText;
 document.onkeyup = doSomethingWithSelectedText; 
 
 function getUserDefinedID(str) {
+	if(!str)
+		return '';
     var lastIndex = str.lastIndexOf('=');
     if (lastIndex === -1) {
         return ''; // Return an empty string if no "=" is found

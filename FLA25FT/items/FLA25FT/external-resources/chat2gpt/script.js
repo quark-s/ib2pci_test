@@ -33,7 +33,7 @@ async function loadModel() {
 function welcome (){
 	const chatDiv = document.createElement("div");
     chatDiv.classList.add("chat", "incoming");
-    chatDiv.innerHTML = "<div>How Can I help you?<br/>You have <b>three</b> free request!</div>";
+    chatDiv.innerHTML = "<div>How can I help you?<br/>You have <b>three</b> free requests!</div>";
     
  	const html = `<div class="chat-content">
                     <div class="chat-details">
@@ -84,7 +84,15 @@ const getChatResponse = async (incomingChatDiv) => {
     const pElement = document.createElement("p");
      
     try {
-        
+        let taskText = tasks["B"];
+        let responseArray = GptResponses["B"];
+        if(userDefId == "CHAT2GPT_A"){
+            taskText = tasks["A"];
+            responseArray = GptResponses["A"];
+        }
+        taskText = taskText.replace(/(\r\n|\n|\r|<br\/>|<i>|<\/i>|<b>|<\/b>|\s)/gm, "").toLowerCase().trim();
+        let userTextCompare = userText.replace(/(\r\n|\n|\r|<br\/>|<i>|<\/i>|<b>|<\/b>|\s)/gm, "").toLowerCase().trim();
+
  		if (/^[A-Za-z]+$/.test(userText)){ 
 
 			let response = "Could you please provide more details or context for your request related to " + userText + "? This will help me assist you more effectively.";
@@ -93,7 +101,15 @@ const getChatResponse = async (incomingChatDiv) => {
             sendTraceMessage("Chat2GPT-SingleWordResponse", response);
 	        console.log("DEBUG: Chat2GPT-SingleWordResponse: " + response);     
 
-        } else {    
+        }
+
+        else if (
+                userTextCompare.includes(taskText)
+            ){
+                pElement.textContent = responseArray[Math.floor(Math.random() * responseArray.length)]
+        }
+
+        else {    
 
 	        // Compare user input with pre-defined prompts and select the most similar prompt
 	
@@ -260,6 +276,8 @@ themeButton.addEventListener("click", () => {
 
 const initialInputHeight = chatInput.scrollHeight;
 
+var currentPasteEvent = {};
+
 chatInput.addEventListener("input", () => {   
     // Adjust the height of the input field dynamically based on its content
     chatInput.style.height =  `${initialInputHeight}px`;
@@ -267,12 +285,28 @@ chatInput.addEventListener("input", () => {
 });
 
 chatInput.addEventListener("keydown", (e) => {
+
+    var charLower = String.fromCharCode(e.which).toLowerCase();
+
     // If the Enter key is pressed without Shift 
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         handleOutgoingChat();
     }
+    else if((e.ctrlKey || e.metaKey) && charLower == "v"){
+        currentPasteEvent = {"cursorPosStart": chatInput.selectionStart};
+    }
 });
+
+chatInput.addEventListener("keyup", (e) => {
+    var charLower = String.fromCharCode(e.which).toLowerCase();
+    if((e.ctrlKey || e.metaKey) && charLower == "v"){
+        let traceMessage = JSON.stringify({...currentPasteEvent, "event": "chatInputPaste", "content": e.target.value, "cursorPosEnd": chatInput.selectionStart});
+        currentPasteEvent = {};
+        sendTraceMessage("chatInputPaste", traceMessage);
+        console.log('CTRL +  V', traceMessage);
+    }    
+})
 
 loadDataFromLocalstorage();
 sendButton.addEventListener("click", handleOutgoingChat);

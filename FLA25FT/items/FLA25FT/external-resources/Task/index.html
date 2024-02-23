@@ -1,298 +1,329 @@
 <html>
+
 <head>
-<meta charset="utf-8"/> 
-<style>
-body {
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    margin: 0px;
-}
-</style>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 0px;
+        }
+    </style>
+
+    <script type="text/javascript" src="tasks.js"></script>
+
 </head>
 
 
 <body>
- 
-  <p style="line-height:20px;"><div id="taskDiv"/></p>
- 
- <script type="text/javascript">
 
-function getSelectedText() {
-    var text = "";
-    if (typeof window.getSelection != "undefined") {
-        text = window.getSelection().toString();
-    } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
-        text = document.selection.createRange().text;
-    }
-    return text;
-}
+    <p style="line-height:20px;">
+        <div id="taskDiv" />
+    </p>
 
-function doSomethingWithSelectedText() {
-    var selectedText = getSelectedText();
-    if (selectedText) {
-        postTraceMessage(selectedText,"FLA Writing Selection",traceCount++)    
-        console.log("DEBUG: Text selection = " + selectedText);
-    }
-}
+    <script type="text/javascript">
 
-document.onmouseup = doSomethingWithSelectedText;
-document.onkeyup = doSomethingWithSelectedText;
-
-function setState(state){	
-
-}
- 
-function getState() {
-    return { content: "" } ;    
-}
-
-var traceCount = 0;
-
-function getQueryVariable(variable)
-{
-	const parsedUrl = new URL(window.location.href);
-	return parsedUrl.searchParams.get(variable);
-}
-  
-function getUserDefinedID(str) {
-    var lastIndex = str.lastIndexOf('=');
-    if (lastIndex === -1) {
-        return ''; // Return an empty string if no "=" is found
-    }
-    return str.substring(lastIndex + 1); // +1 to start after the "="
-}
- 
-var indexPath = getQueryVariable('indexPath');
-var userDefIdPath = getQueryVariable('userDefIdPath');
-var userDefId = getUserDefinedID(userDefIdPath);
-var taskDIV = document.getElementById('taskDiv');
-
-console.log("DEBUG: Writing Prompt for = " + userDefId);
-
-if (userDefId=="TAKS_A_EPFTraditional" || userDefId=="TAKS_A_EPFChat"){
-	taskDIV.innerHTML = "<b>Task:&nbsp;</b><i> Do you agree or disagree with the following statement?</i><br/> Television advertising directed toward young children (aged two to five) should not be allowed.";
-}
-else{
-    taskDIV.innerHTML = "<b>Task:&nbsp;</b><i> Do you agree or disagree with the following statement?</i><br/> A teacher’s ability to relate well with students is more important than excellent knowledge of the subject being taught.";
-} 
-
-document.addEventListener('contextmenu', event => {
-    event.preventDefault();        
-    postTraceMessage("right click","FLA Writing",traceCount++)    
-});
-
-
-function acceptGetVariableResult(name, type, value, callId) {
-	
-}
- 
-function declareVariables() {
-	return [ { 	} ];
-}
-
-startListeningToVariableDeclarationRequests(declareVariables);
-
-// ------------------ methods for generic use ----------------------------------------------------------
-
-/**
- * Trigger a state machine event in the CBA runtime. 
- * 
- * The traceCount parameter must be an integer value greater or equal 0 and
- * specifies wether the given the event will count as one or more user interactions.   
- */
- function postStatemachineEvent(eventName, traceCount)
-{
-	postMessageWithPaths({
-        microfinEvent: eventName,
-        traceCount: traceCount
-	});
-}
-
-/**
- * Inject a message into the trace log of the CBA runtime. 
- * 
- * The traceType parameter is optional. It determines the trace type attribute 
- * of the injected trace message.
- * 
- * The traceCount parameter must be an integer value greater or equal 0 and
- * specifies wether the given the event will count as one or more user interactions.   
- */
- function postTraceMessage(traceMessage, traceType, traceCount)
-{
-	postMessageWithPaths({
-    	traceMessage: traceMessage,
-        traceType: traceType,
-        traceCount: traceCount
-	});
-}
-
-/**
- * Get the value of a variable in the CBA runtime. 
- * 
- * The callId parameter should be used to match the call to the 
- * result coming in via the getVariableResultCallback (see startListeningToPostMessageEvents method).
- */
- function postGetVariable(variableName, callId)
-{
-	postMessageWithPaths({
-    	getVariable: {
-    	  variableName: variableName,
-    	  callId: callId,
-    	},
-        traceCount: 0
-
-	});
-}
-
-/**
- * Set the value of a variable in the CBA runtime. 
- * 
- * The traceCount parameter must be an integer value greater or equal 0 and
- * specifies wether the given the event will count as one or more user interactions.   
- */
-function postSetVariable(variableName, variableValue, traceCount)
-{
-	postMessageWithPaths({
-    	setVariable: {
-    	  variableName: variableName,
-    	  newValue: variableValue,
-    	},
-        traceCount: traceCount
-	});
-}
-
-/**
- * Send the given payload as an event to the CBA runtime 
- * and implicitly extend it with the paths of our hosting ExternalPageFrame component.
- * 
- * This might might not work if the ExternalPageFrame content comes
- * from an external server. 
- * 
- */
-function postMessageWithPaths(payload)
-{
-	payload.indexPath = getIndexPath();
-	payload.userDefIdPath = getUserDefIdPath();
-	postMessageWithErrorLog(payload);
-}
-
-/**
- * Send an event to the CBA runtime.
- */
-function postMessageWithErrorLog(payload)
-{
-	try
-	{
-		// TODO: adapt the target origin  
-		window.parent.postMessage(JSON.stringify(payload), '*');	
-	} 
-	catch(e) {
-		console.debug(e); 
-	}
-}
-
-/**
- * Obtain the path of user defined IDs leading to our hosting ExternalPageFrame component.
- * 
- * You might use this as value for the userDefIdPath attribute in the message payload structure
- * when sending events to the CBA runtime.
- * 
- * This might might not work if the ExternalPageFrame content comes
- * from an external server. 
- */
- function getUserDefIdPath()
-{
-	return getQueryVariable('userDefIdPath');
-}
-
-/**
- * Obtain the index path of our hosting ExternalPageFrame component.
- * 
- * You might use this as value for the userDefIdPath attribute in the message payload structure
- * when sending events to the CBA runtime.
- * 
- * This might might not work if the ExternalPageFrame content comes
- * from an external server. 
- */
-function getIndexPath() 
-{
-	return getQueryVariable('indexPath');
-}
-
-/**
- * Obtain the value of a query variable from the calling URL. 
- * 
- * @variable: The name of the variable in the URL query.
- */
-function getQueryVariable(variable)
-{
-	const parsedUrl = new URL(window.location.href);
-	return parsedUrl.searchParams.get(variable);
-}
-
-/**
- * Start listening on post message events coming in from the CBA runtime.
- * 
- * The getVariableResultCallback parameter should be a method that accepts four parameters: 
- *   - name: the name of the variable
- *   - type: the data type of the variable
- *   - value: the value of the variable
- *   - callId: the callId of the getVariable call that triggered this result message.
- * 
- * The operatorMessageCallback parameter should be a method that accepts an array.
- * 
- */
- function startListeningToRuntimePostMessageEvents(getVariableResultCallback, operatorMessageCallback) {
-    window.addEventListener(
-	"message", 
-	(event) => {
-		const payload = JSON.parse(event.data);
-		if (payload !== null && typeof(payload) === 'object' && payload.callId !== undefined) {
-            if (payload.result !== null && typeof(payload.result) === 'object') {
-			    const { name, type, value } = payload.result;			
-			    getVariableResultCallback(name, type, value, payload.callId);
-            }   
-		} else if (Array.isArray(payload)) { 
-			operatorMessageCallback(payload);
-		}
-	}, 
-	false);
- }
-
- 
-/**
- * Start listening on post message events coming in from the item builder during time design time.
- * 
- * The declareVariableCallback parameter should be a method that expects no parameter and returns 
- * an array of variable declaration objects with these attributes:
- *   - name: the name of the variable
- *   - type: the type of the variable, one of 'Integer', 'Number', 'String', 'Boolean'
- *   - defaultValue: the initial value of the variable
- *   - namedValues: an array of objects with a name and a value attribute. 
- */
- function startListeningToVariableDeclarationRequests(declareVariableCallback) {
-    // listener for providing initial variable data signal.
-    window.addEventListener(
-    "message",
-    (event) => {    
-        const { callId } = JSON.parse(event.data);
-        if(callId !== undefined && callId.includes("importVariables")) {
-            const variables = declareVariables();
-            const pass_data = {
-            initialVariables: variables,
-            callId
+		let currentTask = "?";
+		let eventCount = 0;
+		
+        function getSelectedText() {
+            var text = "";
+            if (typeof window.getSelection != "undefined") {
+                text = window.getSelection().toString();
+            } else if (typeof document.selection != "undefined" && document.selection.type == "Text") {
+                text = document.selection.createRange().text;
             }
-            try {
-                window.parent.postMessage(JSON.stringify(pass_data), '*');
-            } catch (error) {
-                console.log("error on external listener - ", error);
+            return text;
+        }
+
+        function doSomethingWithSelectedText() {
+            var selectedText = getSelectedText();
+            if (selectedText) {
+                postTraceMessage(selectedText, "FLA Writing Selection", traceCount++)
+                console.log("DEBUG: Text selection = " + selectedText);
             }
         }
-    },
-    false);
- }
- 
 
-  
- </script>
+        document.onmouseup = doSomethingWithSelectedText;
+        document.onkeyup = function (e) {
+
+            var selectedText = getSelectedText();
+            var charLower = String.fromCharCode(e.which).toLowerCase();
+
+            data = {
+                'userDefIdPath': userDefIdPath,
+                'traceMessage': {},
+            }
+
+            if ((e.ctrlKey || e.metaKey) && charLower == "c") {
+                data['traceCount'] = traceCount++;
+                data['traceMessage'] = JSON.stringify({ "event": "textCopy", "selected": selectedText });
+                window.parent.postMessage(JSON.stringify(data), "*");
+                console.log('CTRL + C', selectedText, data);
+            }
+        };
+
+        function setState(state) {
+
+        }
+
+        function getState() {
+            return { content: "" };
+        }
+
+        var traceCount = 0;
+
+        function getQueryVariable(variable) {
+            const parsedUrl = new URL(window.location.href);
+            return parsedUrl.searchParams.get(variable);
+        }
+
+        function getUserDefinedID(str) {
+            var lastIndex = str.lastIndexOf('=');
+            if (lastIndex === -1) {
+                return ''; // Return an empty string if no "=" is found
+            }
+            return str.substring(lastIndex + 1); // +1 to start after the "="
+        }
+
+        var indexPath = getQueryVariable('indexPath');
+        var userDefIdPath = getQueryVariable('userDefIdPath');
+        var userDefId = getUserDefinedID(userDefIdPath);
+        var taskDIV = document.getElementById('taskDiv');
+
+        
+        document.addEventListener('contextmenu', event => {
+            event.preventDefault();
+            postTraceMessage("right click", "FLA Writing", traceCount++)
+        });
+
+		function updateText() {
+
+			console.log("DEBUG: Writing Prompt for = " + userDefId + " / "  + currentTask);
+
+	        if (currentTask=="A") {
+	            taskDIV.innerHTML = tasks["intro"] + tasks["A"];
+	        }
+	        else {
+	            taskDIV.innerHTML = tasks["intro"] + tasks["B"];
+	        }
+		
+		} 
+		
+		function acceptOperatorMessage(data) {	
+		 	 
+		 	console.log(data);
+		 	currentTask = data[0]; 
+			updateText();	
+
+		}
+		
+		startListeningToRuntimePostMessageEvents(acceptGetVariableResult, acceptOperatorMessage);
+		 
+		postStatemachineEvent('EV_HelperReady', eventCount++);
+		 
+        function acceptGetVariableResult(name, type, value, callId) {
+
+        }
+
+        function declareVariables() {
+            return [{}];
+        }
+
+        startListeningToVariableDeclarationRequests(declareVariables);
+
+        // ------------------ methods for generic use ----------------------------------------------------------
+
+        /**
+         * Trigger a state machine event in the CBA runtime. 
+         * 
+         * The traceCount parameter must be an integer value greater or equal 0 and
+         * specifies wether the given the event will count as one or more user interactions.   
+         */
+        function postStatemachineEvent(eventName, traceCount) {
+            postMessageWithPaths({
+                microfinEvent: eventName,
+                traceCount: traceCount
+            });
+        }
+
+        /**
+         * Inject a message into the trace log of the CBA runtime. 
+         * 
+         * The traceType parameter is optional. It determines the trace type attribute 
+         * of the injected trace message.
+         * 
+         * The traceCount parameter must be an integer value greater or equal 0 and
+         * specifies wether the given the event will count as one or more user interactions.   
+         */
+        function postTraceMessage(traceMessage, traceType, traceCount) {
+            postMessageWithPaths({
+                traceMessage: traceMessage,
+                traceType: traceType,
+                traceCount: traceCount
+            });
+        }
+
+        /**
+         * Get the value of a variable in the CBA runtime. 
+         * 
+         * The callId parameter should be used to match the call to the 
+         * result coming in via the getVariableResultCallback (see startListeningToPostMessageEvents method).
+         */
+        function postGetVariable(variableName, callId) {
+            postMessageWithPaths({
+                getVariable: {
+                    variableName: variableName,
+                    callId: callId,
+                },
+                traceCount: 0
+
+            });
+        }
+
+        /**
+         * Set the value of a variable in the CBA runtime. 
+         * 
+         * The traceCount parameter must be an integer value greater or equal 0 and
+         * specifies wether the given the event will count as one or more user interactions.   
+         */
+        function postSetVariable(variableName, variableValue, traceCount) {
+            postMessageWithPaths({
+                setVariable: {
+                    variableName: variableName,
+                    newValue: variableValue,
+                },
+                traceCount: traceCount
+            });
+        }
+
+        /**
+         * Send the given payload as an event to the CBA runtime 
+         * and implicitly extend it with the paths of our hosting ExternalPageFrame component.
+         * 
+         * This might might not work if the ExternalPageFrame content comes
+         * from an external server. 
+         * 
+         */
+        function postMessageWithPaths(payload) {
+            payload.indexPath = getIndexPath();
+            payload.userDefIdPath = getUserDefIdPath();
+            postMessageWithErrorLog(payload);
+        }
+
+        /**
+         * Send an event to the CBA runtime.
+         */
+        function postMessageWithErrorLog(payload) {
+            try {
+                // TODO: adapt the target origin  
+                window.parent.postMessage(JSON.stringify(payload), '*');
+            }
+            catch (e) {
+                console.debug(e);
+            }
+        }
+
+        /**
+         * Obtain the path of user defined IDs leading to our hosting ExternalPageFrame component.
+         * 
+         * You might use this as value for the userDefIdPath attribute in the message payload structure
+         * when sending events to the CBA runtime.
+         * 
+         * This might might not work if the ExternalPageFrame content comes
+         * from an external server. 
+         */
+        function getUserDefIdPath() {
+            return getQueryVariable('userDefIdPath');
+        }
+
+        /**
+         * Obtain the index path of our hosting ExternalPageFrame component.
+         * 
+         * You might use this as value for the userDefIdPath attribute in the message payload structure
+         * when sending events to the CBA runtime.
+         * 
+         * This might might not work if the ExternalPageFrame content comes
+         * from an external server. 
+         */
+        function getIndexPath() {
+            return getQueryVariable('indexPath');
+        }
+
+        /**
+         * Obtain the value of a query variable from the calling URL. 
+         * 
+         * @variable: The name of the variable in the URL query.
+         */
+        function getQueryVariable(variable) {
+            const parsedUrl = new URL(window.location.href);
+            return parsedUrl.searchParams.get(variable);
+        }
+
+        /**
+         * Start listening on post message events coming in from the CBA runtime.
+         * 
+         * The getVariableResultCallback parameter should be a method that accepts four parameters: 
+         *   - name: the name of the variable
+         *   - type: the data type of the variable
+         *   - value: the value of the variable
+         *   - callId: the callId of the getVariable call that triggered this result message.
+         * 
+         * The operatorMessageCallback parameter should be a method that accepts an array.
+         * 
+         */
+        function startListeningToRuntimePostMessageEvents(getVariableResultCallback, operatorMessageCallback) {
+            window.addEventListener(
+                "message",
+                (event) => {
+                    const payload = JSON.parse(event.data);
+                    if (payload !== null && typeof (payload) === 'object' && payload.callId !== undefined) {
+                        if (payload.result !== null && typeof (payload.result) === 'object') {
+                            const { name, type, value } = payload.result;
+                            getVariableResultCallback(name, type, value, payload.callId);
+                        }
+                    } else if (Array.isArray(payload)) {
+                        operatorMessageCallback(payload);
+                    }
+                },
+                false);
+        }
+
+
+        /**
+         * Start listening on post message events coming in from the item builder during time design time.
+         * 
+         * The declareVariableCallback parameter should be a method that expects no parameter and returns 
+         * an array of variable declaration objects with these attributes:
+         *   - name: the name of the variable
+         *   - type: the type of the variable, one of 'Integer', 'Number', 'String', 'Boolean'
+         *   - defaultValue: the initial value of the variable
+         *   - namedValues: an array of objects with a name and a value attribute. 
+         */
+        function startListeningToVariableDeclarationRequests(declareVariableCallback) {
+            // listener for providing initial variable data signal.
+            window.addEventListener(
+                "message",
+                (event) => {
+                    const { callId } = JSON.parse(event.data);
+                    if (callId !== undefined && callId.includes("importVariables")) {
+                        const variables = declareVariables();
+                        const pass_data = {
+                            initialVariables: variables,
+                            callId
+                        }
+                        try {
+                            window.parent.postMessage(JSON.stringify(pass_data), '*');
+                        } catch (error) {
+                            console.log("error on external listener - ", error);
+                        }
+                    }
+                },
+                false);
+        }
+
+
+
+    </script>
+
 </html>

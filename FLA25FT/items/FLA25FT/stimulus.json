@@ -87,19 +87,19 @@
   } ],
   "externalResources" : [ {
     "pathInZip" : "external-resources\\Task\\index.html",
-    "size" : 8585,
+    "size" : 11458,
     "type" : "urlTarget"
   }, {
     "pathInZip" : "external-resources\\Write\\index.html",
-    "size" : 12086,
+    "size" : 12838,
     "type" : "urlTarget"
   }, {
     "pathInZip" : "external-resources\\Loading\\index.html",
-    "size" : 7176,
+    "size" : 7276,
     "type" : "urlTarget"
   }, {
     "pathInZip" : "external-resources\\chat2gpt\\index.html",
-    "size" : 2399,
+    "size" : 2706,
     "type" : "urlTarget"
   } ],
   "dependencies" : [ ],

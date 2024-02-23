@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/ib2pci_test/PS2003/static/css/main.f8610f8c.chunk.css",
-    "main.js": "/ib2pci_test/PS2003/static/js/main.dc1e64a0.chunk.js",
+    "main.js": "/ib2pci_test/PS2003/static/js/main.68db452a.chunk.js",
     "runtime-main.js": "/ib2pci_test/PS2003/static/js/runtime-main.788be969.js",
     "static/js/2.f3535282.chunk.js": "/ib2pci_test/PS2003/static/js/2.f3535282.chunk.js",
     "index.html": "/ib2pci_test/PS2003/index.html",
@@ -11,6 +11,6 @@
     "static/js/runtime-main.788be969.js",
     "static/js/2.f3535282.chunk.js",
     "static/css/main.f8610f8c.chunk.css",
-    "static/js/main.dc1e64a0.chunk.js"
+    "static/js/main.68db452a.chunk.js"
   ]
 }
